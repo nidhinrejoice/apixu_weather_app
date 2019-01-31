@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class HomeViewModel extends ViewModel {
@@ -34,31 +35,47 @@ public class HomeViewModel extends ViewModel {
     private MutableLiveData<Current> currentWeather;
     private MutableLiveData<String> errorMsg;
 
+    android.location.Location location;
+    boolean locationShown;
+
     @Inject
     HomeViewModel(WeatherService weatherService) {
         this.weatherService = weatherService;
         forecastList = new MutableLiveData<>();
         isLoading = new MutableLiveData<>();
         errorMsg = new MutableLiveData<>();
-        currentWeather=new MutableLiveData<>();
-        currentLocation=new MutableLiveData<>();
+        currentWeather = new MutableLiveData<>();
+        currentLocation = new MutableLiveData<>();
         this.compositeDisposable = new CompositeDisposable();
     }
 
-    public void onScreenCreated() {
-        isLoading.setValue(true);
-        String currentDate = getCurrentDate();
-        compositeDisposable.add(weatherService.getForecast("4", "Manali")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onSuccess, this::onError));
+    public void onLocChanged(android.location.Location location) {
+        this.location = location;
+        if (!locationShown)
+            onScreenCreated();
+        locationShown = true;
     }
 
-    void onSuccess(WeatherResponse response) {
-        forecastList.setValue(response.getForecast().getForecastday());
+    public void onScreenCreated() {
+        if (location != null) {
+            isLoading.setValue(true);
+            compositeDisposable.add(weatherService.getForecast("7", String.valueOf(location.getLatitude() + "," + location.getLongitude()))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread()).map(response -> {
+                        {
+                            currentWeather.setValue(response.getCurrent());
+                            currentLocation.setValue(response.getLocation());
+                            return response.getForecast().getForecastday();
+                        }
+                    })
+                    .subscribe(this::onSuccess, this::onError));
+        }
+    }
+
+    void onSuccess(List<Forecastday> list) {
+        locationShown = true;
+        forecastList.setValue(list);
         isLoading.setValue(false);
-        currentWeather.setValue(response.getCurrent());
-        currentLocation.setValue(response.getLocation());
     }
 
     private void onError(Throwable throwable) {
@@ -86,6 +103,7 @@ public class HomeViewModel extends ViewModel {
     public LiveData<Current> getCurrentWeather() {
         return currentWeather;
     }
+
     public LiveData<Location> getCurrentLocation() {
         return currentLocation;
     }

@@ -1,20 +1,21 @@
 package com.nidhin.apixu_weather.home;
 
 
-import android.app.MediaRouteButton;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
+import android.Manifest;
+import android.app.AlertDialog;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -23,7 +24,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.bumptech.glide.request.RequestOptions;
 import com.nidhin.apixu_weather.R;
 import com.nidhin.apixu_weather.base.BaseActivity;
 import com.nidhin.apixu_weather.data.model.Current;
@@ -34,7 +34,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.BindAnim;
 import butterknife.BindView;
 
 public class HomeActivity extends BaseActivity {
@@ -56,6 +55,8 @@ public class HomeActivity extends BaseActivity {
     RecyclerView recyclerView;
     @BindView(R.id.swipeRefresh)
     SwipeRefreshLayout swipeRefreshLayout;
+    private int ENABLE_LOCATION = 1001;
+    private LocationManager locationManager;
 
     @Override
     protected int layoutRes() {
@@ -72,7 +73,32 @@ public class HomeActivity extends BaseActivity {
         viewModel.getForecastData().observe(this, this::setForeCastData);
         viewModel.getCurrentLocation().observe(this, this::setCurrentLocation);
         swipeRefreshLayout.setOnRefreshListener(() -> viewModel.refresh());
-        viewModel.onScreenCreated();
+        // Acquire a reference to the system Location Manager
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        requestLocation();
+
+    }
+
+    void requestLocation(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Location permission required")
+                    .setMessage("Location permission required to get the weather details of your place")
+                    .setPositiveButton("OK", (dialogInterface, i) -> {
+                        dialogInterface.dismiss();
+
+                        ActivityCompat.requestPermissions(this,
+                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                                ENABLE_LOCATION);
+                    })
+                    .setNegativeButton("Cancel", (dialogInterface, i) -> {
+                        dialogInterface.dismiss();
+                        finish();
+                    }).create().show();
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 100, locationListener);
     }
 
     private void setCurrentLocation(Location location) {
@@ -98,7 +124,7 @@ public class HomeActivity extends BaseActivity {
             recyclerView.setLayoutManager(layoutManager);
             DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                     layoutManager.getOrientation());
-            recyclerView.addItemDecoration(dividerItemDecoration);
+//            recyclerView.addItemDecoration(dividerItemDecoration);
             recyclerView.setAdapter(adapter);
         }
     }
@@ -123,6 +149,37 @@ public class HomeActivity extends BaseActivity {
     private void hideProgress() {
         swipeRefreshLayout.setRefreshing(false);
         progress.setVisibility(View.GONE);
+    }
+
+
+    // Define a listener that responds to location updates
+    LocationListener locationListener = new LocationListener() {
+
+        @Override
+        public void onLocationChanged(android.location.Location location) {
+            viewModel.onLocChanged(location);
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+
+        public void onProviderEnabled(String provider) {
+        }
+
+        public void onProviderDisabled(String provider) {
+        }
+    };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ENABLE_LOCATION) {
+            if (resultCode == RESULT_CANCELED) {
+                finish();
+            } else {
+               requestLocation();
+            }
+        }
     }
 
 }
