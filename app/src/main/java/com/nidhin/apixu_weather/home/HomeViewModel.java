@@ -7,6 +7,7 @@ import android.arch.lifecycle.ViewModel;
 import com.nidhin.apixu_weather.data.api.WeatherService;
 import com.nidhin.apixu_weather.data.model.Current;
 import com.nidhin.apixu_weather.data.model.Forecastday;
+import com.nidhin.apixu_weather.data.model.Location;
 import com.nidhin.apixu_weather.data.model.WeatherResponse;
 
 import java.text.SimpleDateFormat;
@@ -25,6 +26,7 @@ public class HomeViewModel extends ViewModel {
     private static final String COUNTRY_US = "US";
     private static final String QUERY_DATE_FORMAT = "yyyy-MM-dd";
     private static final String SCHEDULE_DATE_FORMAT = "EEE, MMM d, ''yy";
+    private final MutableLiveData<Location> currentLocation;
     private CompositeDisposable compositeDisposable;
     private WeatherService weatherService;
     private MutableLiveData<Boolean> isLoading;
@@ -39,6 +41,7 @@ public class HomeViewModel extends ViewModel {
         isLoading = new MutableLiveData<>();
         errorMsg = new MutableLiveData<>();
         currentWeather=new MutableLiveData<>();
+        currentLocation=new MutableLiveData<>();
         this.compositeDisposable = new CompositeDisposable();
     }
 
@@ -55,6 +58,7 @@ public class HomeViewModel extends ViewModel {
         forecastList.setValue(response.getForecast().getForecastday());
         isLoading.setValue(false);
         currentWeather.setValue(response.getCurrent());
+        currentLocation.setValue(response.getLocation());
     }
 
     private void onError(Throwable throwable) {
@@ -81,6 +85,9 @@ public class HomeViewModel extends ViewModel {
 
     public LiveData<Current> getCurrentWeather() {
         return currentWeather;
+    }
+    public LiveData<Location> getCurrentLocation() {
+        return currentLocation;
     }
 
     public LiveData<List<Forecastday>> getForecastData() {

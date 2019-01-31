@@ -21,40 +21,11 @@ public class Utils {
     public static String getFormattedDate(String value) throws ParseException {
         java.text.DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
         Date date= dateFormat.parse(value);
-        String dateString = getFormattedDay(date.getDate());
-        dateString = getDayStringFromDayNumeric(date.getDay()) + ", " + dateString ;
+        String dateString = String.valueOf((date.getDate()));
+        dateString = getDayStringFromDayNumeric(date.getDay()) + ", " + dateString+getDayOfMonthSuffix(date.getDate()) ;
         return dateString;
     }
 
-    static String getFormattedDay(int day) {
-        if (day < 10)
-            return "0" + day;
-        else
-            return String.valueOf(day);
-    }
-
-    public static String getFormattedHour(int hour, int min) {
-        String value;
-        if (hour < 10)
-            value = "0" + hour;
-        else if (hour > 12) {
-            if (hour - 12 < 10)
-                value = "0" + String.valueOf(hour - 12);
-            else
-                value = String.valueOf(hour - 12);
-        } else
-            value = String.valueOf(hour);
-        value = value + ":";
-        if (min < 10)
-            value = value + "0" + min;
-        else
-            value = value + min;
-        if (hour > 11)
-            value = value + " pm";
-        else
-            value = value + " am";
-        return value;
-    }
 
     static String getDayOfMonthSuffix(final int n) {
 //        checkArgument(n >= 1 && n <= 31, "illegal day of month: " + n);

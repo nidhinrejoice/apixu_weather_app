@@ -28,6 +28,7 @@ import com.nidhin.apixu_weather.R;
 import com.nidhin.apixu_weather.base.BaseActivity;
 import com.nidhin.apixu_weather.data.model.Current;
 import com.nidhin.apixu_weather.data.model.Forecastday;
+import com.nidhin.apixu_weather.data.model.Location;
 
 import java.util.List;
 
@@ -69,8 +70,15 @@ public class HomeActivity extends BaseActivity {
         viewModel.getErrorMsg().observe(this, this::showError);
         viewModel.getCurrentWeather().observe(this, this::setCurrentWeather);
         viewModel.getForecastData().observe(this, this::setForeCastData);
+        viewModel.getCurrentLocation().observe(this, this::setCurrentLocation);
         swipeRefreshLayout.setOnRefreshListener(() -> viewModel.refresh());
         viewModel.onScreenCreated();
+    }
+
+    private void setCurrentLocation(Location location) {
+        if (location != null) {
+            tvLocation.setText(location.getName());
+        }
     }
 
     private void setCurrentWeather(Current current) {
