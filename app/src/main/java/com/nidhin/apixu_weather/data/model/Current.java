@@ -12,13 +12,13 @@ public class Current implements Parcelable
 
     @SerializedName("last_updated_epoch")
     @Expose
-    private Integer lastUpdatedEpoch;
+    private Long lastUpdatedEpoch;
     @SerializedName("last_updated")
     @Expose
     private String lastUpdated;
     @SerializedName("temp_c")
     @Expose
-    private Integer tempC;
+    private Double tempC;
     @SerializedName("temp_f")
     @Expose
     private Double tempF;
@@ -42,16 +42,16 @@ public class Current implements Parcelable
     private String windDir;
     @SerializedName("pressure_mb")
     @Expose
-    private Integer pressureMb;
+    private Double pressureMb;
     @SerializedName("pressure_in")
     @Expose
     private Double pressureIn;
     @SerializedName("precip_mm")
     @Expose
-    private Integer precipMm;
+    private Double precipMm;
     @SerializedName("precip_in")
     @Expose
-    private Integer precipIn;
+    private Double precipIn;
     @SerializedName("humidity")
     @Expose
     private Integer humidity;
@@ -66,62 +66,19 @@ public class Current implements Parcelable
     private Double feelslikeF;
     @SerializedName("vis_km")
     @Expose
-    private Integer visKm;
+    private Double visKm;
     @SerializedName("vis_miles")
     @Expose
-    private Integer visMiles;
+    private Double visMiles;
     @SerializedName("uv")
     @Expose
-    private Integer uv;
-    public final static Parcelable.Creator<Current> CREATOR = new Creator<Current>() {
+    private Double uv;
 
-
-        @SuppressWarnings({
-            "unchecked"
-        })
-        public Current createFromParcel(Parcel in) {
-            return new Current(in);
-        }
-
-        public Current[] newArray(int size) {
-            return (new Current[size]);
-        }
-
-    }
-    ;
-
-    protected Current(Parcel in) {
-        this.lastUpdatedEpoch = ((Integer) in.readValue((Integer.class.getClassLoader())));
-        this.lastUpdated = ((String) in.readValue((String.class.getClassLoader())));
-        this.tempC = ((Integer) in.readValue((Integer.class.getClassLoader())));
-        this.tempF = ((Double) in.readValue((Double.class.getClassLoader())));
-        this.isDay = ((Integer) in.readValue((Integer.class.getClassLoader())));
-        this.condition = ((Condition) in.readValue((Condition.class.getClassLoader())));
-        this.windMph = ((Double) in.readValue((Double.class.getClassLoader())));
-        this.windKph = ((Double) in.readValue((Double.class.getClassLoader())));
-        this.windDegree = ((Integer) in.readValue((Integer.class.getClassLoader())));
-        this.windDir = ((String) in.readValue((String.class.getClassLoader())));
-        this.pressureMb = ((Integer) in.readValue((Integer.class.getClassLoader())));
-        this.pressureIn = ((Double) in.readValue((Double.class.getClassLoader())));
-        this.precipMm = ((Integer) in.readValue((Integer.class.getClassLoader())));
-        this.precipIn = ((Integer) in.readValue((Integer.class.getClassLoader())));
-        this.humidity = ((Integer) in.readValue((Integer.class.getClassLoader())));
-        this.cloud = ((Integer) in.readValue((Integer.class.getClassLoader())));
-        this.feelslikeC = ((Double) in.readValue((Double.class.getClassLoader())));
-        this.feelslikeF = ((Double) in.readValue((Double.class.getClassLoader())));
-        this.visKm = ((Integer) in.readValue((Integer.class.getClassLoader())));
-        this.visMiles = ((Integer) in.readValue((Integer.class.getClassLoader())));
-        this.uv = ((Integer) in.readValue((Integer.class.getClassLoader())));
-    }
-
-    public Current() {
-    }
-
-    public Integer getLastUpdatedEpoch() {
+    public Long getLastUpdatedEpoch() {
         return lastUpdatedEpoch;
     }
 
-    public void setLastUpdatedEpoch(Integer lastUpdatedEpoch) {
+    public void setLastUpdatedEpoch(Long lastUpdatedEpoch) {
         this.lastUpdatedEpoch = lastUpdatedEpoch;
     }
 
@@ -133,11 +90,11 @@ public class Current implements Parcelable
         this.lastUpdated = lastUpdated;
     }
 
-    public Integer getTempC() {
+    public Double getTempC() {
         return tempC;
     }
 
-    public void setTempC(Integer tempC) {
+    public void setTempC(Double tempC) {
         this.tempC = tempC;
     }
 
@@ -197,11 +154,11 @@ public class Current implements Parcelable
         this.windDir = windDir;
     }
 
-    public Integer getPressureMb() {
+    public Double getPressureMb() {
         return pressureMb;
     }
 
-    public void setPressureMb(Integer pressureMb) {
+    public void setPressureMb(Double pressureMb) {
         this.pressureMb = pressureMb;
     }
 
@@ -213,19 +170,19 @@ public class Current implements Parcelable
         this.pressureIn = pressureIn;
     }
 
-    public Integer getPrecipMm() {
+    public Double getPrecipMm() {
         return precipMm;
     }
 
-    public void setPrecipMm(Integer precipMm) {
+    public void setPrecipMm(Double precipMm) {
         this.precipMm = precipMm;
     }
 
-    public Integer getPrecipIn() {
+    public Double getPrecipIn() {
         return precipIn;
     }
 
-    public void setPrecipIn(Integer precipIn) {
+    public void setPrecipIn(Double precipIn) {
         this.precipIn = precipIn;
     }
 
@@ -261,56 +218,96 @@ public class Current implements Parcelable
         this.feelslikeF = feelslikeF;
     }
 
-    public Integer getVisKm() {
+    public Double getVisKm() {
         return visKm;
     }
 
-    public void setVisKm(Integer visKm) {
+    public void setVisKm(Double visKm) {
         this.visKm = visKm;
     }
 
-    public Integer getVisMiles() {
+    public Double getVisMiles() {
         return visMiles;
     }
 
-    public void setVisMiles(Integer visMiles) {
+    public void setVisMiles(Double visMiles) {
         this.visMiles = visMiles;
     }
 
-    public Integer getUv() {
+    public Double getUv() {
         return uv;
     }
 
-    public void setUv(Integer uv) {
+    public void setUv(Double uv) {
         this.uv = uv;
     }
 
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeValue(lastUpdatedEpoch);
-        dest.writeValue(lastUpdated);
-        dest.writeValue(tempC);
-        dest.writeValue(tempF);
-        dest.writeValue(isDay);
-        dest.writeValue(condition);
-        dest.writeValue(windMph);
-        dest.writeValue(windKph);
-        dest.writeValue(windDegree);
-        dest.writeValue(windDir);
-        dest.writeValue(pressureMb);
-        dest.writeValue(pressureIn);
-        dest.writeValue(precipMm);
-        dest.writeValue(precipIn);
-        dest.writeValue(humidity);
-        dest.writeValue(cloud);
-        dest.writeValue(feelslikeC);
-        dest.writeValue(feelslikeF);
-        dest.writeValue(visKm);
-        dest.writeValue(visMiles);
-        dest.writeValue(uv);
-    }
-
+    @Override
     public int describeContents() {
-        return  0;
+        return 0;
     }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.lastUpdatedEpoch);
+        dest.writeString(this.lastUpdated);
+        dest.writeValue(this.tempC);
+        dest.writeValue(this.tempF);
+        dest.writeValue(this.isDay);
+        dest.writeParcelable(this.condition, flags);
+        dest.writeValue(this.windMph);
+        dest.writeValue(this.windKph);
+        dest.writeValue(this.windDegree);
+        dest.writeString(this.windDir);
+        dest.writeValue(this.pressureMb);
+        dest.writeValue(this.pressureIn);
+        dest.writeValue(this.precipMm);
+        dest.writeValue(this.precipIn);
+        dest.writeValue(this.humidity);
+        dest.writeValue(this.cloud);
+        dest.writeValue(this.feelslikeC);
+        dest.writeValue(this.feelslikeF);
+        dest.writeValue(this.visKm);
+        dest.writeValue(this.visMiles);
+        dest.writeValue(this.uv);
+    }
+
+    public Current() {
+    }
+
+    protected Current(Parcel in) {
+        this.lastUpdatedEpoch = (Long) in.readValue(Long.class.getClassLoader());
+        this.lastUpdated = in.readString();
+        this.tempC = (Double) in.readValue(Double.class.getClassLoader());
+        this.tempF = (Double) in.readValue(Double.class.getClassLoader());
+        this.isDay = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.condition = in.readParcelable(Condition.class.getClassLoader());
+        this.windMph = (Double) in.readValue(Double.class.getClassLoader());
+        this.windKph = (Double) in.readValue(Double.class.getClassLoader());
+        this.windDegree = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.windDir = in.readString();
+        this.pressureMb = (Double) in.readValue(Double.class.getClassLoader());
+        this.pressureIn = (Double) in.readValue(Double.class.getClassLoader());
+        this.precipMm = (Double) in.readValue(Double.class.getClassLoader());
+        this.precipIn = (Double) in.readValue(Double.class.getClassLoader());
+        this.humidity = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.cloud = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.feelslikeC = (Double) in.readValue(Double.class.getClassLoader());
+        this.feelslikeF = (Double) in.readValue(Double.class.getClassLoader());
+        this.visKm = (Double) in.readValue(Double.class.getClassLoader());
+        this.visMiles = (Double) in.readValue(Double.class.getClassLoader());
+        this.uv = (Double) in.readValue(Double.class.getClassLoader());
+    }
+
+    public static final Creator<Current> CREATOR = new Creator<Current>() {
+        @Override
+        public Current createFromParcel(Parcel source) {
+            return new Current(source);
+        }
+
+        @Override
+        public Current[] newArray(int size) {
+            return new Current[size];
+        }
+    };
 }

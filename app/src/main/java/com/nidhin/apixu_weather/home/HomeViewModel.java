@@ -45,7 +45,7 @@ public class HomeViewModel extends ViewModel {
     public void onScreenCreated() {
         isLoading.setValue(true);
         String currentDate = getCurrentDate();
-        compositeDisposable.add(weatherService.getForecast("4", "Bangalore")
+        compositeDisposable.add(weatherService.getForecast("4", "Manali")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::onSuccess, this::onError));
@@ -81,6 +81,10 @@ public class HomeViewModel extends ViewModel {
 
     public LiveData<Current> getCurrentWeather() {
         return currentWeather;
+    }
+
+    public LiveData<List<Forecastday>> getForecastData() {
+        return forecastList;
     }
 
 

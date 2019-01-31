@@ -44,7 +44,7 @@ public class Day implements Parcelable {
     private Double avgvisKm;
     @SerializedName("avgvis_miles")
     @Expose
-    private Integer avgvisMiles;
+    private Double avgvisMiles;
     @SerializedName("avghumidity")
     @Expose
     private Double avghumidity;
@@ -143,11 +143,11 @@ public class Day implements Parcelable {
         this.avgvisKm = avgvisKm;
     }
 
-    public Integer getAvgvisMiles() {
+    public Double getAvgvisMiles() {
         return avgvisMiles;
     }
 
-    public void setAvgvisMiles(Integer avgvisMiles) {
+    public void setAvgvisMiles(Double avgvisMiles) {
         this.avgvisMiles = avgvisMiles;
     }
 
@@ -214,7 +214,7 @@ public class Day implements Parcelable {
         this.totalprecipMm = (Double) in.readValue(Double.class.getClassLoader());
         this.totalprecipIn = (Double) in.readValue(Double.class.getClassLoader());
         this.avgvisKm = (Double) in.readValue(Double.class.getClassLoader());
-        this.avgvisMiles = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.avgvisMiles = (Double) in.readValue(Double.class.getClassLoader());
         this.avghumidity = (Double) in.readValue(Double.class.getClassLoader());
         this.condition = in.readParcelable(Condition.class.getClassLoader());
         this.uv = (Double) in.readValue(Double.class.getClassLoader());
