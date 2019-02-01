@@ -12,7 +12,7 @@ public class UtilsTest {
     public void getFormattedDate() {
 
         try {
-            assertEquals("Friday, 23",Utils.getFormattedDate("2019-02-02"));
+            assertEquals("Saturday, 2nd",Utils.getFormattedDate("2019-02-02"));
         } catch (ParseException e) {
             e.printStackTrace();
         }

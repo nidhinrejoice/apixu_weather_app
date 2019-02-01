@@ -1,5 +1,8 @@
 package com.nidhin.apixu_weather.util;
 
+import android.app.Activity;
+import android.util.DisplayMetrics;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -19,7 +22,7 @@ public class Utils {
         }
     }
     public static String getFormattedDate(String value) throws ParseException {
-        java.text.DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+        java.text.DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date= dateFormat.parse(value);
         String dateString = String.valueOf((date.getDate()));
         dateString = getDayStringFromDayNumeric(date.getDay()) + ", " + dateString+getDayOfMonthSuffix(date.getDate()) ;
@@ -64,5 +67,18 @@ public class Utils {
                 return "Sunday";
         }
 
+    }
+
+
+    public static float getScreenHeight(Activity activity) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        return displayMetrics.heightPixels;
+    }
+
+    public static float getScreenWidth(Activity activity) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        return displayMetrics.widthPixels;
     }
 }

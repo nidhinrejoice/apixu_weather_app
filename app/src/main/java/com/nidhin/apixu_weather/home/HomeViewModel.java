@@ -12,6 +12,7 @@ import com.nidhin.apixu_weather.data.model.WeatherResponse;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -59,7 +60,7 @@ public class HomeViewModel extends ViewModel {
     public void onScreenCreated() {
         if (location != null) {
             isLoading.setValue(true);
-            compositeDisposable.add(weatherService.getForecast("7", String.valueOf(location.getLatitude() + "," + location.getLongitude()))
+            compositeDisposable.add(weatherService.getForecast("5", String.valueOf(location.getLatitude() + "," + location.getLongitude()))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread()).map(response -> {
                         {
@@ -74,6 +75,7 @@ public class HomeViewModel extends ViewModel {
 
     void onSuccess(List<Forecastday> list) {
         locationShown = true;
+        list.remove(0);//Removing the first item as it shows the weather info for the current date
         forecastList.setValue(list);
         isLoading.setValue(false);
     }

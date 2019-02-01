@@ -11,12 +11,16 @@ import android.content.pm.PackageManager;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -29,6 +33,7 @@ import com.nidhin.apixu_weather.base.BaseActivity;
 import com.nidhin.apixu_weather.data.model.Current;
 import com.nidhin.apixu_weather.data.model.Forecastday;
 import com.nidhin.apixu_weather.data.model.Location;
+import com.nidhin.apixu_weather.util.Utils;
 
 import java.util.List;
 
@@ -41,8 +46,6 @@ public class HomeActivity extends BaseActivity {
     private HomeViewModel viewModel;
     @Inject
     ViewModelProvider.Factory viewModelFactory;
-    @BindView(R.id.progress)
-    ProgressBar progress;
     @BindView(R.id.currentTemp)
     TextView tvCurrentTemp;
     @BindView(R.id.condition)
@@ -51,9 +54,15 @@ public class HomeActivity extends BaseActivity {
     TextView tvLocation;
     @BindView(R.id.icon)
     ImageView ivIcon;
+    @BindView(R.id.label)
+    TextView tvLabel;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
-    @BindView(R.id.swipeRefresh)
+    @BindView(R.id.app_bar)
+    AppBarLayout mAppBarLayout;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.swipe)
     SwipeRefreshLayout swipeRefreshLayout;
     private int ENABLE_LOCATION = 1001;
     private LocationManager locationManager;
@@ -66,6 +75,20 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        float heightDp = getResources().getDisplayMetrics().heightPixels * 4 / 10;
+        CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) mAppBarLayout.getLayoutParams();
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setHomeButtonEnabled(true);
+        lp.height = (int) heightDp;
+        AppBarLayout.Behavior behavior = new AppBarLayout.Behavior();
+        behavior.setDragCallback(new AppBarLayout.Behavior.DragCallback() {
+            @Override
+            public boolean canDrag(AppBarLayout appBarLayout) {
+                return false;
+            }
+        });
+        lp.setBehavior(behavior);
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(HomeViewModel.class);
         viewModel.isLoading().observe(this, this::setProgress);
         viewModel.getErrorMsg().observe(this, this::showError);
@@ -79,7 +102,7 @@ public class HomeActivity extends BaseActivity {
 
     }
 
-    void requestLocation(){
+    void requestLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             new AlertDialog.Builder(this)
@@ -98,27 +121,35 @@ public class HomeActivity extends BaseActivity {
                     }).create().show();
             return;
         }
+        swipeRefreshLayout.setRefreshing(true);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 100, locationListener);
     }
 
     private void setCurrentLocation(Location location) {
         if (location != null) {
-            tvLocation.setText(location.getName());
+            getSupportActionBar().setTitle(location.getName() );
+            tvLocation.setText(location.getName() + ", " + location.getRegion());
         }
     }
 
     private void setCurrentWeather(Current current) {
         if (current != null) {
-            tvCurrentTemp.setText(String.valueOf(current.getTempC()) + "°");
+            tvCurrentTemp.setText(String.valueOf(current.getTempC()) + "°C");
             Glide.with(this).load("https:" + current.getCondition().getIcon())
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(ivIcon);
-            tvCondition.setText("(" + current.getCondition().getText() + ")");
+            tvCondition.setText(current.getCondition().getText());
         }
     }
 
     private void setForeCastData(List<Forecastday> list) {
         if (list != null) {
+            recyclerView.setVisibility(View.VISIBLE);
+            tvLabel.setVisibility(View.VISIBLE);
+            tvLabel.setAlpha(0);
+            tvLabel.animate().alpha(1).setDuration(600);
+            recyclerView.setY(Utils.getScreenHeight(this));
+            recyclerView.animate().translationY(0).setDuration(800).setInterpolator(new DecelerateInterpolator());
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);
             ForeCastAdapter adapter = new ForeCastAdapter(this, list);
             recyclerView.setLayoutManager(layoutManager);
@@ -143,12 +174,10 @@ public class HomeActivity extends BaseActivity {
 
     private void showProgress() {
         swipeRefreshLayout.setRefreshing(true);
-        progress.setVisibility(View.VISIBLE);
     }
 
     private void hideProgress() {
         swipeRefreshLayout.setRefreshing(false);
-        progress.setVisibility(View.GONE);
     }
 
 
@@ -177,7 +206,7 @@ public class HomeActivity extends BaseActivity {
             if (resultCode == RESULT_CANCELED) {
                 finish();
             } else {
-               requestLocation();
+                requestLocation();
             }
         }
     }
